@@ -1,0 +1,123 @@
+nextflow_process {
+
+    name "Test Process GATK_HAPLOTYPECALLER"
+    script "modules/gatk/haplotypecaller/main.nf"
+    process "GATK_HAPLOTYPECALLER"
+
+    test("Should call son's haplotype correctly") {
+
+        setup {
+            run("SAMTOOLS_INDEX") {
+                script "../../../samtools/index/main.nf"
+                process {
+                    """
+                    input[0] =  file("${projectDir}/data/bam/reads_son.bam")
+                    """
+                }
+            }
+        }
+
+        when {
+            params {
+                outdir = "tests/results"
+            }
+            process {
+                """
+                input[0] = SAMTOOLS_INDEX.out
+                input[1] = file("${projectDir}/data/ref/ref.fasta")
+                input[2] = file("${projectDir}/data/ref/ref.fasta.fai")
+                input[3] = file("${projectDir}/data/ref/ref.dict")
+                input[4] = file("${projectDir}/data/ref/intervals.bed")
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            // the next two lines test the identify of specific expected lines in the output g.vcf file
+            assert path(process.out[0][0]).readLines().contains('#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	reads_son')
+            assert path(process.out[0][0]).readLines().contains('20_10037292_10066351	3277	.	G	<NON_REF>	.	.	END=3282	GT:DP:GQ:MIN_DP:PL	0/0:25:72:24:0,72,719')
+            // assert snapshot(process.out).match() // this will not working with haplotype caller as it includes timestamps in the output VCF and this will never match the prior snapshot
+
+        }
+
+    }
+
+
+    test("Should call mothers haplotype correctly") {
+
+        setup {
+            run("SAMTOOLS_INDEX") {
+                script "../../../samtools/index/main.nf"
+                process {
+                    """
+                    input[0] =  file("${projectDir}/data/bam/reads_mother.bam")
+                    """
+                }
+            }
+        }
+
+        when {
+            params {
+                outdir = "tests/results"
+            }
+            process {
+                """
+                input[0] = SAMTOOLS_INDEX.out
+                input[1] = file("${projectDir}/data/ref/ref.fasta")
+                input[2] = file("${projectDir}/data/ref/ref.fasta.fai")
+                input[3] = file("${projectDir}/data/ref/ref.dict")
+                input[4] = file("${projectDir}/data/ref/intervals.bed")
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            // the next two lines test the identify of specific expected lines in the output g.vcf file
+            assert path(process.out[0][0]).readLines().contains('#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	reads_mother')
+            assert path(process.out[0][0]).readLines().contains('20_10037292_10066351	3277	.	G	<NON_REF>	.	.	END=3278	GT:DP:GQ:MIN_DP:PL	0/0:38:99:37:0,102,1530')
+
+        }
+
+    }
+
+    test("Should call fathers haplotype correctly") {
+
+        setup {
+            run("SAMTOOLS_INDEX") {
+                script "../../../samtools/index/main.nf"
+                process {
+                    """
+                    input[0] =  file("${projectDir}/data/bam/reads_father.bam")
+                    """
+                }
+            }
+        }
+
+        when {
+            params {
+                outdir = "tests/results"
+            }
+            process {
+                """
+                input[0] = SAMTOOLS_INDEX.out
+                input[1] = file("${projectDir}/data/ref/ref.fasta")
+                input[2] = file("${projectDir}/data/ref/ref.fasta.fai")
+                input[3] = file("${projectDir}/data/ref/ref.dict")
+                input[4] = file("${projectDir}/data/ref/intervals.bed")
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            // the next two lines test the identify of specific expected lines in the output g.vcf file
+            assert path(process.out[0][0]).readLines().contains('#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	reads_father')
+            assert path(process.out[0][0]).readLines().contains('20_10037292_10066351	3277	.	G	<NON_REF>	.	.	END=3281	GT:DP:GQ:MIN_DP:PL	0/0:44:99:42:0,120,1800')
+
+        }
+
+    }
+
+}

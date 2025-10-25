@@ -1,18 +1,35 @@
-# Nextflow generated files
+# Nextflow work directory
 work/
+
+# Nextflow cache and logs
 .nextflow/
 .nextflow.log*
-results/
 
-# macOS files
+# nf-test artifacts and temporary files
+.nf-test/
+.nf-test.log
+
+# Pipeline results directories
+results*/
+tests/results/
+
+# Mac system files
 .DS_Store
 
-# Python
-__pycache__/
-*.py[cod]
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
 
-# R
-.Rhistory
-.RData
-.Rproj.user/  
+# Temporary files
+*.tmp
+*.bak
 
+# Log files
+*.log
+trace*.txt
+timeline*.html
+report*.html
+dag*.html

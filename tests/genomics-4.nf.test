@@ -1,0 +1,21 @@
+nextflow_pipeline {
+
+    name "Should run the pipeline without failures"
+    script "genomics-4.nf"
+
+    test("Should run without failures") {
+
+        when {
+            params {
+                // define parameters here. Example: 
+                // outdir = "tests/results"
+            }
+        }
+
+        then {
+            assert workflow.success
+        }
+
+    }
+
+}
